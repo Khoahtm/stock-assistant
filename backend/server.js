@@ -1,10 +1,12 @@
 const express = require("express");
+const cors = require("cors");
 const { getQuote } = require("./services/finhub");
 const mongoose = require("mongoose");
 const portfolioRouter = require("./routes/portfolio");
 
 const app = express();
 const PORT = 3000;
+app.use(cors({ origin: "http://localhost:5173" }));
 
 app.use(express.json());
 app.use("/api/portfolio", portfolioRouter);
