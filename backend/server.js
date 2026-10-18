@@ -66,6 +66,20 @@ app.get("/api/stocks/:symbol", async (req, res) => {
   }
 });
 
+// 404: không route nào khớp
+app.use((req, res) => {
+  res.status(404).json({ error: "Không tìm thấy đường dẫn" });
+});
+
+// Bộ xử lý lỗi: phải có đủ 4 tham số
+app.use((err, req, res, next) => {
+  if (err.type === "entity.parse.failed") {
+    return res.status(400).json({ error: "Body không phải JSON hợp lệ" });
+  }
+  console.log("Lỗi không lường trước:", err.message);
+  res.status(500).json({ error: "Lỗi server" });
+});
+
 async function start() {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("Đã kết nối MongoDB:", mongoose.connection.name);
