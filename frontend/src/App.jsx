@@ -27,6 +27,14 @@ function App() {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
 
+  const filteredStocks = stocks.filter((s) => {
+  const keyword = query.trim().toLowerCase();
+  const symbol = s.symbol.toLowerCase();
+  const name = (s.name || "").toLowerCase();
+
+  return symbol.includes(keyword) || name.includes(keyword);
+});
+
   useEffect(() => {
     async function load() {
       try {
@@ -57,16 +65,18 @@ function App() {
         onChange={(e) => setQuery(e.target.value)}
       />
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {stocks
-          .filter((s) => s.symbol.includes(query.toUpperCase()))
-          .map((s) => (
+        {filteredStocks.length > 0 ? (
+          filteredStocks.map((s) => (
             <StockCard
               key={s.symbol}
               symbol={s.symbol}
               price={s.price}
               changePercent={s.changePercent}
             />
-          ))}
+          ))
+      ) : (
+        <p>Không tìm thấy cổ phiếu phù hợp.</p>
+      )}
       </div>
     </div>
   );
