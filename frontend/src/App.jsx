@@ -64,6 +64,9 @@ function App() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <button onClick={() => setQuery("")}>
+       Xóa tìm kiếm
+      </button>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {filteredStocks.length > 0 ? (
           filteredStocks.map((s) => (
