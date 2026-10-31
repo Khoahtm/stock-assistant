@@ -1,38 +1,33 @@
 import { useState, useEffect } from "react";
+import StockCard from "./components/stockCard.jsx";
 
 const API_URL = "http://localhost:3000";
 
-function StockCard({ symbol, price, changePercent }) {
-  const [watching, setWatching] = useState(false);
-  const hasChange = typeof changePercent === "number";
-  const isUp = hasChange && changePercent >= 0;
-
-  return (
-    <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 12, margin: 8, width: 200 }}>
-      <h3>{symbol}</h3>
-      <p>Giá: {price}</p>
-      <p style={{ color: isUp ? "green" : "red" }}>
-        {hasChange ? `${isUp ? "▲" : "▼"} ${changePercent.toFixed(2)}%` : "–"}
-      </p>
-      <button onClick={() => setWatching(!watching)}>
-        {watching ? "★ Đang theo dõi" : "☆ Theo dõi"}
-      </button>
-    </div>
-  );
-}
 
 function App() {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("all");
 
+  
   const filteredStocks = stocks.filter((s) => {
-  const keyword = query.trim().toLowerCase();
-  const symbol = s.symbol.toLowerCase();
-  const name = (s.name || "").toLowerCase();
+    const keyword = query.trim().toLowerCase();
+    const symbol = s.symbol.toLowerCase();
+    const name = (s.name || "").toLowerCase();
 
-  return symbol.includes(keyword) || name.includes(keyword);
+    // Điều kiện tìm kiếm
+    const matchesSearch =
+      symbol.includes(keyword) || name.includes(keyword);
+
+    // Điều kiện lọc tăng giảm
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "up" && s.changePercent > 0) ||
+      (filter === "down" && s.changePercent < 0);
+
+    return matchesSearch && matchesFilter;
 });
 
   useEffect(() => {
@@ -80,6 +75,19 @@ function App() {
       ) : (
         <p>Không tìm thấy cổ phiếu phù hợp.</p>
       )}
+      </div>
+      <div>
+        <button onClick={() => setFilter("all")}>
+          Tất cả
+        </button>
+
+        <button onClick={() => setFilter("up")}>
+          Tăng giá
+        </button>
+
+        <button onClick={() => setFilter("down")}>
+          Giảm giá
+        </button>
       </div>
     </div>
   );
