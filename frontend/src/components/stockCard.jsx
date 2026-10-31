@@ -1,6 +1,14 @@
-import { useState } from "react";
-function StockCard({ symbol, price, changePercent }) {
-  const [watching, setWatching] = useState(false);
+
+function StockCard({
+  symbol,
+  price,
+  changePercent,
+  watchlist,
+  setWatchlist
+}) {
+  const watching = watchlist.some(
+  (stock) => stock.symbol === symbol
+);
   const hasChange = typeof changePercent === "number";
   const isUp = hasChange && changePercent >= 0;
 
@@ -11,7 +19,13 @@ function StockCard({ symbol, price, changePercent }) {
       <p style={{ color: isUp ? "green" : "red" }}>
         {hasChange ? `${isUp ? "▲" : "▼"} ${changePercent.toFixed(2)}%` : "–"}
       </p>
-      <button onClick={() => setWatching(!watching)}>
+      <button onClick={() => {
+        if (watching) {
+          setWatchlist(watchlist.filter((stock) => stock.symbol !== symbol));
+        } else {
+          setWatchlist([...watchlist, { symbol, price, changePercent }]);
+        }
+      }}>
         {watching ? "★ Đang theo dõi" : "☆ Theo dõi"}
       </button>
     </div>
